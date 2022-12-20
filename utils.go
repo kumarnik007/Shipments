@@ -75,6 +75,18 @@ func persitShipments(shipments []ShipmentInfo) {
   _ = encoder.Encode(shipments)
 }
 
+func getPricingPlan() (Pricing) {
+  byteValue, err := readJSON(PRICING)
+  if err != nil {
+    return Pricing{}
+  }
+
+  var pricing Pricing
+  _ = json.Unmarshal([]byte(byteValue), &pricing)
+
+  return pricing
+}
+
 // Sets the logger flag to include file name and number in the logs
 // to be printed.
 func setLoggerFlag() {

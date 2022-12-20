@@ -1,28 +1,28 @@
 package main
 
 // Apply weight Class Rules and get the base price
-func getBasePrice(weight float64) float64 {
+func getBasePrice(weight float64, rule WeightRule) float64 {
   // Weight Class : Small
-  if weight < 10 {
-    return 100
+  if weight < rule.Small.End {
+    return rule.Small.Price
   }
 
   // Weight Class : Medium
-  if weight < 25 {
-    return 300
+  if weight < rule.Medium.End {
+    return rule.Medium.Price
   }
 
   // Weight Class : Large
-  if weight < 50 {
-    return 500
+  if weight < rule.Large.End {
+    return rule.Large.Price
   }
 
   // Weight Class : Huge
-  return 2000
+  return rule.Huge.Price
 }
 
 // Apply Region Rules and get price multiplier
-func getPriceMultiplier(sender, receiver string) (float64, error) {
+func getPriceMultiplier(sender, receiver string, multiplier RegionRule) (float64, error) {
   euCountries, err := getAllEUCountryCodes()
   if err != nil {
     return 0, err
@@ -30,21 +30,29 @@ func getPriceMultiplier(sender, receiver string) (float64, error) {
 
   // Shipment is within EU and domestic
   if contains(euCountries, sender) && contains(euCountries, receiver) && sender == receiver {
-    return 1, nil
+    return multiplier.Domestic, nil
   }
 
   // Shipment is within the EU
   if contains(euCountries, sender) && contains(euCountries, receiver) {
-    return 1.5, nil
+    return multiplier.Eu, nil
   }
 
   // Shipment has either sender or/and receiver country as non-EU member
-  return 2.5, nil
+  return multiplier.International, nil
 }
 
-func calculatePrice(sender, receiver string, weight float64) (float64, error) {
-  basePrice := getBasePrice(weight)
-  priceMultiplier, errorResponse := getPriceMultiplier(sender, receiver)
+func calculatePrice(
+  sender, receiver string,
+  weight float64,
+  pricing Pricing,
+) (float64, error) {
+  basePrice := getBasePrice(weight, pricing.WeightClass)
+  priceMultiplier, errorResponse := getPriceMultiplier(
+    sender,
+    receiver,
+    pricing.Multiplier,
+  )
 
   return (priceMultiplier * basePrice), errorResponse
 }

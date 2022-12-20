@@ -1,0 +1,30 @@
+{
+  "weight": {
+    "small": {
+      "begin": 0,
+      "end": 10,
+      "price": 100
+    },
+    "medium": {
+      "begin": 10,
+      "end": 25,
+      "price": 300
+    },
+    "large": {
+      "begin": 25,
+      "end": 50,
+      "price": 500
+    },
+    "huge": {
+      "begin": 50,
+      "end": 1000,
+      "price": 2000
+    }
+  },
+  "region": {
+    "domestic": 1,
+    "eu": 1.5,
+    "international": 2.5
+  },
+  "currency": "SEK"
+}

@@ -18,6 +18,31 @@ type CountryInfo struct {
   Code string `json:"code"`
 }
 
+type WeightInfo struct {
+  Begin float64 `json:"begin"`
+  End   float64 `json:"end"`
+  Price float64 `json:"price"`
+}
+
+type WeightRule struct {
+  Small  WeightInfo `json:"small"`
+  Medium WeightInfo `json:"medium"`
+  Large  WeightInfo `json:"large"`
+  Huge   WeightInfo `json:"huge"`
+}
+
+type RegionRule struct {
+  Domestic      float64 `json:"domestic"`
+  Eu            float64 `json:"eu"`
+  International float64 `json:"international"`
+}
+
+type Pricing struct {
+  WeightClass WeightRule `json:"weight"`
+  Multiplier  RegionRule `json:"region"`
+  Currency    string     `json:"currency"`
+}
+
 const (
   CONTENT_TYPE     = "Content-type"
   APPLICATION_JSON = "application/json"
@@ -28,6 +53,7 @@ const (
   API_CORE      = "[API_CORE]"
   SWEDISH_KRONA = "SEK"
 
-  EU_COUNTRIES = "eu.json"
+  EU_COUNTRIES = "config/eu.json"
   STORAGE      = "storage.json"
+  PRICING      = "config/pricing.json"
 )

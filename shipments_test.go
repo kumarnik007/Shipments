@@ -190,6 +190,7 @@ func Helper_TestApi(
 
   shipment := Shipment{
     all: initialShipments,
+    pricing: getPricingPlan(),
   }
 
   if apiName == SHIPMENT_API_ENDPOINT || apiName == SHIPMENTS_API_ENDPOINT {

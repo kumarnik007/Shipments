@@ -14,6 +14,7 @@ func main() {
   shipment := Shipment{
     // Retrieve all shipments from storage.
     all: retrieveShipments(),
+    pricing: getPricingPlan(),
   }
 
   http.Handle(SHIPMENTS_API_ENDPOINT, ApiHandler(shipment.handleAPI))
