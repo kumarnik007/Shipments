@@ -83,7 +83,7 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
     )
   }
 
-  errorResponse = validatePostShipmentInputParams(
+  errorResponse = shipment.validatePostRequest(
     msg.Sender_country,
     msg.Receiver_country,
     msg.Weight,
@@ -125,7 +125,7 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
   return nil
 }
 
-func validatePostShipmentInputParams(sender, receiver string, weight float64) error {
+func (shipment *Shipment) validatePostRequest(sender, receiver string, weight float64) error {
   var allCountryCodes []string
 
   allCountryCodes = make([]string, len(countries.All()))
@@ -143,8 +143,13 @@ func validatePostShipmentInputParams(sender, receiver string, weight float64) er
     errString += " Receiver country code is not recognised."
   }
 
-  if weight < 0 || weight > 1000 {
-    errString += " Shipment weight value outside permissible limits [0 - 1000]."
+  if weight < shipment.pricing.WeightClass.Small.Begin ||
+    weight > shipment.pricing.WeightClass.Huge.End {
+    errString += " Shipment weight value outside permissible limits [" +
+                 strconv.FormatFloat(shipment.pricing.WeightClass.Small.Begin, 'f', 2, 64) +
+                 " - " +
+                 strconv.FormatFloat(shipment.pricing.WeightClass.Huge.End, 'f', 2, 64) +
+                 "]."
   }
 
   if errString == "" {

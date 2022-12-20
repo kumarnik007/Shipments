@@ -97,6 +97,75 @@ func Test_Shipment400UnexpectedContentType(t *testing.T) {
   )
 }
 
+func Test_Shipment400InvalidWeight(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SE",
+    Receiver_country: "SE",
+    Weight:           1001,
+  })
+  expected, _ := json.Marshal(
+    HTTPError{
+      Detail: "Bad Input -  Shipment weight value outside permissible limits [0.00 - 1000.00].",
+    },
+  )
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusBadRequest,
+    []ShipmentInfo{},
+  )
+}
+
+func Test_Shipment400InvalidSenderCountry(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SWEDEN",
+    Receiver_country: "SE",
+    Weight:           10,
+  })
+  expected, _ := json.Marshal(
+    HTTPError{
+      Detail: "Bad Input - Sender country code is not recognised.",
+    },
+  )
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusBadRequest,
+    []ShipmentInfo{},
+  )
+}
+
+func Test_Shipment400InvalidReceiverCountry(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SE",
+    Receiver_country: "ABCDEF",
+    Weight:           10,
+  })
+  expected, _ := json.Marshal(
+    HTTPError{
+      Detail: "Bad Input -  Receiver country code is not recognised.",
+    },
+  )
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusBadRequest,
+    []ShipmentInfo{},
+  )
+}
+
 func Test_ShipmentSuccessDomesticWithinEU(t *testing.T) {
   requestString, _ := json.Marshal(ShipmentInfo{
     Sender_country:   "SE",
