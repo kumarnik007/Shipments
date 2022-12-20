@@ -10,6 +10,7 @@ import (
   "net/http"
   "strconv"
 
+  // https://pkg.go.dev/github.com/biter777/countries#pkg-overview
   "github.com/biter777/countries"
 )
 
@@ -90,7 +91,14 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
     return errorResponse
   }
 
-  var price float64
+  price, errorResponse := calculatePrice(
+    msg.Sender_country,
+    msg.Receiver_country,
+    msg.Weight,
+  )
+  if errorResponse != nil {
+    return errorResponse
+  }
 
   shipmentInfo := &ShipmentInfo{
     Sender_country:   msg.Sender_country,

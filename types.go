@@ -11,6 +11,13 @@ type ResponseGetShipments struct {
   Shipments []ShipmentInfo `json:"shipments"`
 }
 
+// Country Name and Code as per the
+// https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#:~:text=ISO%203166%2D1%20alpha%2D2%20codes%20are%20two%2Dletter,special%20areas%20of%20geographical%20interest.
+type CountryInfo struct {
+  Name string `json:"name"`
+  Code string `json:"code"`
+}
+
 const (
   CONTENT_TYPE     = "Content-type"
   APPLICATION_JSON = "application/json"
@@ -18,7 +25,8 @@ const (
   SHIPMENT_API_ENDPOINT  = "/shipment"
   SHIPMENTS_API_ENDPOINT = "/shipments"
 
-  API_CORE = "[API_CORE]"
-
+  API_CORE      = "[API_CORE]"
   SWEDISH_KRONA = "SEK"
+
+  EU_COUNTRIES = "eu.json"
 )
