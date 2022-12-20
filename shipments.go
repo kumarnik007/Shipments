@@ -6,7 +6,11 @@ package main
 
 import (
   "encoding/json"
+  "io"
   "net/http"
+  "strconv"
+
+  "github.com/biter777/countries"
 )
 
 type Shipment struct {
@@ -47,5 +51,92 @@ func (shipment *Shipment) getAll(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
+  contentType := r.Header.Get(CONTENT_TYPE)
+  if contentType != APPLICATION_JSON {
+    // Return 400 Bad Request.
+    return NewHTTPError(nil, 400, "Bad Request : " + CONTENT_TYPE + " header is not " + APPLICATION_JSON)
+  }
+
+  if r.ContentLength == 0 {
+    // Return 400 Bad Request.
+    return NewHTTPError(nil, 400, "Bad Request : No body present")
+  }
+
+  // Read body
+  postBody, errorResponse := io.ReadAll(r.Body)
+  if errorResponse != nil {
+    // Return 500 Internal Server Error.
+    return NewHTTPError(errorResponse, 500, "request body read error")
+  }
+
+  // Unmarshal
+  var msg ShipmentInfo
+  errorResponse = json.Unmarshal(postBody, &msg)
+  if errorResponse != nil {
+    // Return 400 Bad Request.
+    return NewHTTPError(
+      errorResponse,
+      400,
+      "Bad Request : JSON input has invalid value",
+    )
+  }
+
+  errorResponse = validatePostShipmentInputParams(
+    msg.Sender_country,
+    msg.Receiver_country,
+    msg.Weight,
+  )
+  if errorResponse != nil {
+    return errorResponse
+  }
+
+  var price float64
+
+  shipmentInfo := &ShipmentInfo{
+    Sender_country:   msg.Sender_country,
+    Receiver_country: msg.Receiver_country,
+    Weight:           msg.Weight,
+    Price:            strconv.FormatFloat(price, 'f', 2, 64) + " " + SWEDISH_KRONA,
+  }
+
+  shipment.all = append(shipment.all, *shipmentInfo)
+  postResponse, errorResponse := json.Marshal(shipmentInfo)
+  if errorResponse != nil {
+    // Return 500 Internal Server Error.
+    return NewHTTPError(errorResponse, 500, "unable to prepare JSON response")
+  }
+
+  w.Header().Set(CONTENT_TYPE, APPLICATION_JSON)
+  w.Write(postResponse)
+
   return nil
+}
+
+func validatePostShipmentInputParams(sender, receiver string, weight float64) error {
+  var allCountryCodes []string
+
+  allCountryCodes = make([]string, len(countries.All()))
+  for _, country := range countries.AllInfo() {
+    allCountryCodes = append(allCountryCodes, country.Alpha2)
+  }
+
+  errString := ""
+
+  if !contains(allCountryCodes, sender) {
+    errString = "Sender country code is not recognised."
+  }
+
+  if !contains(allCountryCodes, receiver) {
+    errString += " Receiver country code is not recognised."
+  }
+
+  if weight < 0 || weight > 1000 {
+    errString += " Shipment weight value outside permissible limits [0 - 1000]."
+  }
+
+  if errString == "" {
+    return nil
+  }
+
+  return NewHTTPError(nil, 400, "Bad Input - "+errString)
 }

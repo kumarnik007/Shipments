@@ -19,4 +19,6 @@ const (
   SHIPMENTS_API_ENDPOINT = "/shipments"
 
   API_CORE = "[API_CORE]"
+
+  SWEDISH_KRONA = "SEK"
 )
