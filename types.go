@@ -4,7 +4,8 @@ type ShipmentInfo struct {
   Sender_country   string  `json:"sender_country"`
   Receiver_country string  `json:"receiver_country"`
   Weight           float64 `json:"weight"`
-  Price            string  `json:"price"`
+  Price            float64 `json:"price"`
+  Currency         string  `json:"currency"`
 }
 
 type ResponseGetShipments struct {

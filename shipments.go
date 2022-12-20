@@ -110,7 +110,8 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
     Sender_country:   msg.Sender_country,
     Receiver_country: msg.Receiver_country,
     Weight:           msg.Weight,
-    Price:            strconv.FormatFloat(price, 'f', 2, 64) + " " + shipment.pricing.Currency,
+    Price:            price,
+    Currency:         shipment.pricing.Currency,
   }
 
   shipment.all = append(shipment.all, *shipmentInfo)
@@ -153,7 +154,7 @@ func (shipment *Shipment) validatePostRequest(sender, receiver string, weight fl
                  strconv.FormatFloat(shipment.pricing.WeightClass.Small.Begin, 'f', 2, 64) +
                  " - " +
                  strconv.FormatFloat(shipment.pricing.WeightClass.Huge.End, 'f', 2, 64) +
-                 "]."
+                 "] Kgs."
   }
 
   if errString == "" {

@@ -27,8 +27,8 @@ func Test_ShipmentsSuccessEmptySlice(t *testing.T) {
 }
 
 func Test_ShipmentsSuccessInitialShipments(t *testing.T) {
-  shipement1 := ShipmentInfo{Sender_country: "SE", Receiver_country: "SE", Weight: 1, Price: "100 SEK"}
-  shipement2 := ShipmentInfo{Sender_country: "SE", Receiver_country: "DK", Weight: 1, Price: "150 SEK"}
+  shipement1 := ShipmentInfo{Sender_country: "SE", Receiver_country: "SE", Weight: 1, Price: 100, Currency: SWEDISH_KRONA}
+  shipement2 := ShipmentInfo{Sender_country: "SE", Receiver_country: "DK", Weight: 1, Price: 150, Currency: SWEDISH_KRONA}
   expected, _ := json.Marshal(ResponseGetShipments{Shipments: []ShipmentInfo{shipement1, shipement2}})
   Helper_TestApi(
     t,
@@ -111,7 +111,7 @@ func Test_Shipment400InvalidWeight(t *testing.T) {
   })
   expected, _ := json.Marshal(
     HTTPError{
-      Detail: "Bad Input -  Shipment weight value outside permissible limits [0.00 - 1000.00].",
+      Detail: "Bad Input -  Shipment weight value outside permissible limits [0.00 - 1000.00] Kgs.",
     },
   )
   Helper_TestApi(
@@ -209,7 +209,8 @@ func Test_ShipmentSuccessDomesticWithinEU(t *testing.T) {
     Sender_country:   "SE",
     Receiver_country: "SE",
     Weight:           2.5,
-    Price:            "100.00 " + SWEDISH_KRONA,
+    Price:            100.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
@@ -234,7 +235,8 @@ func Test_ShipmentSuccessWithinEU(t *testing.T) {
     Sender_country:   "SE",
     Receiver_country: "DK",
     Weight:           2.5,
-    Price:            "150.00 " + SWEDISH_KRONA,
+    Price:            150.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
@@ -259,7 +261,8 @@ func Test_ShipmentSuccessInternational(t *testing.T) {
     Sender_country:   "SE",
     Receiver_country: "IN",
     Weight:           2.5,
-    Price:            "250.00 " + SWEDISH_KRONA,
+    Price:            250.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
@@ -284,7 +287,8 @@ func Test_ShipmentSuccessWeightMedium(t *testing.T) {
     Sender_country:   "SE",
     Receiver_country: "SE",
     Weight:           10,
-    Price:            "300.00 " + SWEDISH_KRONA,
+    Price:            300.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
@@ -309,7 +313,8 @@ func Test_ShipmentSuccessWeightLarge(t *testing.T) {
     Sender_country:   "US",
     Receiver_country: "SE",
     Weight:           45,
-    Price:            "1250.00 " + SWEDISH_KRONA,
+    Price:            1250.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
@@ -334,7 +339,8 @@ func Test_ShipmentSuccessWeightHuge(t *testing.T) {
     Sender_country:   "US",
     Receiver_country: "SE",
     Weight:           50,
-    Price:            "5000.00 " + SWEDISH_KRONA,
+    Price:            5000.00,
+    Currency:         SWEDISH_KRONA,
   })
   Helper_TestApi(
     t,
