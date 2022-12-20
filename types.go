@@ -29,4 +29,5 @@ const (
   SWEDISH_KRONA = "SEK"
 
   EU_COUNTRIES = "eu.json"
+  STORAGE      = "storage.json"
 )

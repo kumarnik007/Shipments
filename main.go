@@ -12,7 +12,8 @@ func main() {
   setLoggerFlag()
   addr := ":" + strconv.Itoa(PORT_NUMBER)
   shipment := Shipment{
-    all: []ShipmentInfo{},
+    // Retrieve all shipments from storage.
+    all: retrieveShipments(),
   }
 
   http.Handle(SHIPMENTS_API_ENDPOINT, ApiHandler(shipment.handleAPI))

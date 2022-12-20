@@ -108,6 +108,9 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
   }
 
   shipment.all = append(shipment.all, *shipmentInfo)
+  // Store updated shipments to the storage.
+  persitShipments(shipment.all)
+
   postResponse, errorResponse := json.Marshal(shipmentInfo)
   if errorResponse != nil {
     // Return 500 Internal Server Error.

@@ -50,6 +50,31 @@ func getAllEUCountryCodes() ([]string, error) {
   return euCountryCodes, nil
 }
 
+func retrieveShipments() ([]ShipmentInfo) {
+  byteValue, err := readJSON(STORAGE)
+  if err != nil {
+    return []ShipmentInfo{}
+  }
+
+  var shipments []ShipmentInfo
+  _ = json.Unmarshal([]byte(byteValue), &shipments)
+
+  return shipments
+}
+
+func persitShipments(shipments []ShipmentInfo) {
+  jsonFile, err := os.Create(STORAGE)
+  // if os.Create returns an error
+  if err != nil {
+    return
+  }
+
+  defer jsonFile.Close()
+
+  encoder := json.NewEncoder(jsonFile)
+  _ = encoder.Encode(shipments)
+}
+
 // Sets the logger flag to include file name and number in the logs
 // to be printed.
 func setLoggerFlag() {
