@@ -7,6 +7,10 @@ type ShipmentInfo struct {
   Price            string  `json:"price"`
 }
 
+type ResponseGetShipments struct {
+  Shipments []ShipmentInfo `json:"shipments"`
+}
+
 const (
   CONTENT_TYPE     = "Content-type"
   APPLICATION_JSON = "application/json"

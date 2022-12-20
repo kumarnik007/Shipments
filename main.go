@@ -11,7 +11,9 @@ const PORT_NUMBER = 8081
 func main() {
   setLoggerFlag()
   addr := ":" + strconv.Itoa(PORT_NUMBER)
-  shipment := Shipment{}
+  shipment := Shipment{
+    all: []ShipmentInfo{},
+  }
 
   http.Handle(SHIPMENTS_API_ENDPOINT, ApiHandler(shipment.handleAPI))
   http.Handle(SHIPMENT_API_ENDPOINT, ApiHandler(shipment.handleAPI))

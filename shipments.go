@@ -5,10 +5,13 @@
 package main
 
 import (
+  "encoding/json"
   "net/http"
 )
 
-type Shipment struct {}
+type Shipment struct {
+  all []ShipmentInfo
+}
 
 func (shipment *Shipment) handleAPI(w http.ResponseWriter, r *http.Request) error {
   if r.URL.Path == SHIPMENTS_API_ENDPOINT {
@@ -27,6 +30,19 @@ func (shipment *Shipment) handleAPI(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (shipment *Shipment) getAll(w http.ResponseWriter, r *http.Request) error {
+  shipments := &ResponseGetShipments{
+    Shipments: shipment.all,
+  }
+
+  getAllResponse, errorResponse := json.Marshal(shipments)
+  if errorResponse != nil {
+    // Return 500 Internal Server Error.
+    return NewHTTPError(errorResponse, 500, "unable to prepare JSON response")
+  }
+
+  w.Header().Set(CONTENT_TYPE, APPLICATION_JSON)
+  w.Write(getAllResponse)
+
   return nil
 }
 
