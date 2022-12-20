@@ -82,7 +82,10 @@ func getPricingPlan() (Pricing) {
   }
 
   var pricing Pricing
-  _ = json.Unmarshal([]byte(byteValue), &pricing)
+  err = json.Unmarshal([]byte(byteValue), &pricing)
+  if err == nil {
+    pricing.IsReady = true
+  }
 
   return pricing
 }

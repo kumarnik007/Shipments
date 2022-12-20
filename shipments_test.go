@@ -22,6 +22,7 @@ func Test_ShipmentsSuccessEmptySlice(t *testing.T) {
     string(expected),
     http.StatusOK,
     []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -38,6 +39,7 @@ func Test_ShipmentsSuccessInitialShipments(t *testing.T) {
     string(expected),
     http.StatusOK,
     []ShipmentInfo{shipement1, shipement2},
+    Pricing{},
   )
 }
 
@@ -52,6 +54,7 @@ func Test_Shipments405MethodNotAllowed(t *testing.T) {
     string(expected),
     http.StatusMethodNotAllowed,
     []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -66,6 +69,7 @@ func Test_Shipment405MethodNotAllowed(t *testing.T) {
     string(expected),
     http.StatusMethodNotAllowed,
     []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -80,6 +84,7 @@ func Test_Shipment400NoBody(t *testing.T) {
     string(expected),
     http.StatusBadRequest,
     []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -94,6 +99,7 @@ func Test_Shipment400UnexpectedContentType(t *testing.T) {
     string(expected),
     http.StatusBadRequest,
     []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -117,6 +123,7 @@ func Test_Shipment400InvalidWeight(t *testing.T) {
     string(expected),
     http.StatusBadRequest,
     []ShipmentInfo{},
+    getPricingPlan(),
   )
 }
 
@@ -140,6 +147,7 @@ func Test_Shipment400InvalidSenderCountry(t *testing.T) {
     string(expected),
     http.StatusBadRequest,
     []ShipmentInfo{},
+    getPricingPlan(),
   )
 }
 
@@ -163,6 +171,31 @@ func Test_Shipment400InvalidReceiverCountry(t *testing.T) {
     string(expected),
     http.StatusBadRequest,
     []ShipmentInfo{},
+    getPricingPlan(),
+  )
+}
+
+func Test_Shipment500IssueReadingPricing(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SE",
+    Receiver_country: "SE",
+    Weight:           10,
+  })
+  expected, _ := json.Marshal(
+    HTTPError{
+      Detail: "Server error - Problem with reading pricing details.",
+    },
+  )
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusInternalServerError,
+    []ShipmentInfo{},
+    Pricing{},
   )
 }
 
@@ -187,6 +220,7 @@ func Test_ShipmentSuccessDomesticWithinEU(t *testing.T) {
     string(expected),
     http.StatusOK,
     []ShipmentInfo{},
+    getPricingPlan(),
   )
 }
 
@@ -211,6 +245,7 @@ func Test_ShipmentSuccessWithinEU(t *testing.T) {
     string(expected),
     http.StatusOK,
     []ShipmentInfo{},
+    getPricingPlan(),
   )
 }
 
@@ -235,6 +270,7 @@ func Test_ShipmentSuccessInternational(t *testing.T) {
     string(expected),
     http.StatusOK,
     []ShipmentInfo{},
+    getPricingPlan(),
   )
 }
 
@@ -247,6 +283,7 @@ func Helper_TestApi(
   expected string,
   statusCode int,
   initialShipments []ShipmentInfo,
+  pricing Pricing,
 ) {
   req, err := http.NewRequest(apiType, apiName, bytes.NewBuffer(requestString))
   if err != nil {
@@ -259,7 +296,7 @@ func Helper_TestApi(
 
   shipment := Shipment{
     all: initialShipments,
-    pricing: getPricingPlan(),
+    pricing: pricing,
   }
 
   if apiName == SHIPMENT_API_ENDPOINT || apiName == SHIPMENTS_API_ENDPOINT {

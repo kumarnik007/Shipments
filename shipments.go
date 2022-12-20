@@ -83,6 +83,10 @@ func (shipment *Shipment) post(w http.ResponseWriter, r *http.Request) error {
     )
   }
 
+  if !shipment.pricing.IsReady {
+    return NewHTTPError(nil, 500, "Server error - Problem with reading pricing details.")
+  }
+
   errorResponse = shipment.validatePostRequest(
     msg.Sender_country,
     msg.Receiver_country,

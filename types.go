@@ -41,6 +41,7 @@ type Pricing struct {
   WeightClass WeightRule `json:"weight"`
   Multiplier  RegionRule `json:"region"`
   Currency    string     `json:"currency"`
+  IsReady bool
 }
 
 const (
