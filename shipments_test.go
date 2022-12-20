@@ -274,6 +274,81 @@ func Test_ShipmentSuccessInternational(t *testing.T) {
   )
 }
 
+func Test_ShipmentSuccessWeightMedium(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SE",
+    Receiver_country: "SE",
+    Weight:           10,
+  })
+  expected, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "SE",
+    Receiver_country: "SE",
+    Weight:           10,
+    Price:            "300.00 " + SWEDISH_KRONA,
+  })
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusOK,
+    []ShipmentInfo{},
+    getPricingPlan(),
+  )
+}
+
+func Test_ShipmentSuccessWeightLarge(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "US",
+    Receiver_country: "SE",
+    Weight:           45,
+  })
+  expected, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "US",
+    Receiver_country: "SE",
+    Weight:           45,
+    Price:            "1250.00 " + SWEDISH_KRONA,
+  })
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusOK,
+    []ShipmentInfo{},
+    getPricingPlan(),
+  )
+}
+
+func Test_ShipmentSuccessWeightHuge(t *testing.T) {
+  requestString, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "US",
+    Receiver_country: "SE",
+    Weight:           50,
+  })
+  expected, _ := json.Marshal(ShipmentInfo{
+    Sender_country:   "US",
+    Receiver_country: "SE",
+    Weight:           50,
+    Price:            "5000.00 " + SWEDISH_KRONA,
+  })
+  Helper_TestApi(
+    t,
+    http.MethodPost,
+    SHIPMENT_API_ENDPOINT,
+    APPLICATION_JSON,
+    requestString,
+    string(expected),
+    http.StatusOK,
+    []ShipmentInfo{},
+    getPricingPlan(),
+  )
+}
+
 func Helper_TestApi(
   t *testing.T,
   apiType string,
